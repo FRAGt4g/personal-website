@@ -14,7 +14,11 @@ export default {
         accent: "hsl(var(--accent))",
       },
       fontFamily: {
-        sans: ["var(--font-geist-sans)", ...fontFamily.sans],
+        sans: [
+          "var(--theme-font-sans)",
+          "var(--font-geist-sans)",
+          ...fontFamily.sans,
+        ],
       },
       height: {
         "safe-area": "calc(100vh - 60px)",

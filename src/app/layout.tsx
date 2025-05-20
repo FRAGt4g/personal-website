@@ -2,7 +2,9 @@ import "~/styles/globals.css";
 
 import { GeistSans } from "geist/font/sans";
 import { type Metadata } from "next";
+import PageBlur from "~/components/PageBlur";
 import { PreferencesProvider } from "~/components/providers/Preferences-Provider";
+import ThemeHint from "~/components/ThemeHint";
 import Navbar from "../components/Navbar";
 
 export const metadata: Metadata = {
@@ -18,10 +20,12 @@ export default function RootLayout({
     <html lang="en" className={`bg-background text-text ${GeistSans.variable}`}>
       <body>
         <PreferencesProvider>
+          <PageBlur />
           <Navbar />
-          <main className="min-h-safe-area flex flex-col">
+          <main className="flex min-h-safe-area flex-col">
             <div className="flex-1">{children}</div>
           </main>
+          <ThemeHint corner="bottom-right" />
         </PreferencesProvider>
       </body>
     </html>

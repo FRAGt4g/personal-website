@@ -1,114 +1,200 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import { playBlur } from "~/components/PageBlur";
 
 type ExpandOut<T> = T extends infer R ? { [K in keyof R]: R[K] } : never;
 
-export type PreferncesValues<T> = {
+export type StoredPrefernceValue<T> = {
   value: T;
   key: string;
 };
 
-export type PREFERENCE_Theme = "system" | "light" | "dark";
+export type EphemeralPrefernceValue<T> = {
+  value: T;
+};
 
-export type PreferncesConfig = {
-  theme: PreferncesValues<PREFERENCE_Theme> & {
+export const THEME_OPTIONS = {
+  dark: ["dark", "draconic", "cyberpunk", "space"],
+  light: ["light", "aquatic", "forest", "desert"],
+} as const;
+
+export type Theme = (typeof THEME_OPTIONS)[keyof typeof THEME_OPTIONS][number];
+export type PREFERENCE_PreferredLuminosity = "system" | "dark" | "light";
+
+export type StoredPreferences = {
+  luminosity: StoredPrefernceValue<PREFERENCE_PreferredLuminosity> & {
     toggleDarkMode: () => void;
     isDarkMode: () => boolean;
   };
 };
 
-export const DEFAULT_PREFERENCES: PreferncesConfig = {
-  theme: {
-    value: "system",
-    key: "ui-theme",
-    toggleDarkMode: () => null,
-    isDarkMode: () => false,
-  },
-};
-
-type ValuesPart = {
-  [K in keyof PreferncesConfig]: PreferncesConfig[K]["value"];
-};
-
-type SettersPart = {
-  [K in keyof PreferncesConfig as `set${Capitalize<K & string>}`]: (
-    value: PreferncesConfig[K]["value"],
-  ) => void;
-};
-
-type ExtrasPart = {
-  [K in keyof PreferncesConfig as `${K & string}`]: {
-    [k in keyof Omit<
-      PreferncesConfig[K],
-      "key" | "value"
-    >]: PreferncesConfig[K][k];
+export type EphemeralPreferences = {
+  theme: EphemeralPrefernceValue<Theme> & {
+    applyRandomTheme: () => void;
+    setTheme: (theme: Theme) => void;
   };
 };
 
-type FlattenedExtrasPart = {
-  [K in keyof ExtrasPart as `${keyof ExtrasPart[K] & string}`]: ExtrasPart[K][keyof ExtrasPart[K]];
+export const DEFAULT_PREFERENCES: StoredPreferences & EphemeralPreferences = {
+  luminosity: {
+    value: "system",
+    key: "ui-theme",
+    isDarkMode: () => false,
+    toggleDarkMode: () => null,
+  },
+  theme: {
+    value: "light",
+    applyRandomTheme: () => null,
+    setTheme: () => null,
+  },
 };
+
+type ValuesPart<T extends Record<string, { value: unknown }>> = {
+  [K in keyof T]: T[K]["value"];
+};
+
+type SettersPart<T extends Record<string, { value: unknown }>> = {
+  [K in keyof T as `set${Capitalize<K & string>}`]: (
+    value: T[K]["value"],
+  ) => void;
+};
+
+type ExtrasPart<T extends Record<string, { value: unknown }>> = {
+  [K in keyof T as `${K & string}`]: {
+    [k in keyof Omit<T[K], "key" | "value">]: T[K][k];
+  };
+};
+
+type FlattenOneLevel<T extends Record<string, object>> = {
+  [K in keyof T]: T[K] extends object
+    ? keyof T[K] extends never
+      ? never
+      : T[K]
+    : never;
+}[keyof T] extends infer U
+  ? U extends object
+    ? { [K in keyof U]: U[K] }
+    : never
+  : never;
 
 type PreferencesContext = {
   isMounted: boolean;
-} & ExpandOut<ValuesPart & SettersPart & FlattenedExtrasPart>;
+} & ExpandOut<
+  ValuesPart<StoredPreferences> &
+    SettersPart<StoredPreferences> &
+    FlattenOneLevel<ExtrasPart<StoredPreferences>>
+> &
+  ExpandOut<
+    ValuesPart<EphemeralPreferences> &
+      SettersPart<EphemeralPreferences> &
+      FlattenOneLevel<ExtrasPart<EphemeralPreferences>>
+  >;
 
-const PreferencesProviderContext = createContext<PreferencesContext>({
-  isMounted: false,
-  theme: DEFAULT_PREFERENCES.theme.value,
-  setTheme: () => null,
-  toggleDarkMode: () => null,
-  isDarkMode: () => false,
-});
+const PreferencesProviderContext = createContext<PreferencesContext>(
+  Object.entries(DEFAULT_PREFERENCES).reduce(
+    (acc, [key, value]) => {
+      return {
+        ...acc,
+        [key]: value.value,
+      };
+    },
+    {
+      isMounted: false,
+    } as PreferencesContext,
+  ),
+);
 
 export function PreferencesProvider(props: { children: React.ReactNode }) {
   const [isMounted, setIsMounted] = useState(false);
-  const [theme, setTheme] = useState<PREFERENCE_Theme>(
-    DEFAULT_PREFERENCES.theme.value,
+  const [luminosity, setLuminosity] = useState<PREFERENCE_PreferredLuminosity>(
+    DEFAULT_PREFERENCES.luminosity.value,
   );
+  const [theme, setTheme] = useState<Theme>(DEFAULT_PREFERENCES.theme.value);
+
+  function getPrefersDarkMode() {
+    const a = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    console.log("getPrefersDarkMode", a);
+    return a;
+  }
+
+  function darkOrLightLuminosity() {
+    return luminosity === "system"
+      ? getPrefersDarkMode()
+        ? "dark"
+        : "light"
+      : luminosity;
+  }
 
   useEffect(() => {
     const storedTheme = localStorage?.getItem(
-      DEFAULT_PREFERENCES.theme.key,
-    ) as PREFERENCE_Theme | null;
+      DEFAULT_PREFERENCES.luminosity.key,
+    ) as PREFERENCE_PreferredLuminosity | null;
     if (storedTheme) {
-      handleThemeChange(storedTheme);
+      console.log("storedTheme", storedTheme);
+      setLuminosity(storedTheme);
+      applyRandomTheme(storedTheme);
+    } else {
+      applyRandomTheme("system");
     }
 
     setIsMounted(true);
   }, []);
 
-  function handleThemeChange(theme: PREFERENCE_Theme) {
-    localStorage.setItem(DEFAULT_PREFERENCES.theme.key, theme);
-    if (theme === "system") {
-      document.documentElement.classList.toggle(
-        "dark",
-        window.matchMedia("(prefers-color-scheme: dark)").matches,
-      );
+  const applyRandomTheme = useCallback(
+    (_luminosity?: PREFERENCE_PreferredLuminosity) => {
+      const l = _luminosity ?? luminosity;
+      const options =
+        THEME_OPTIONS[l === "system" ? darkOrLightLuminosity() : l];
+      const a = options[Math.floor(Math.random() * options.length)] as Theme;
+      handleThemeChange(a);
+    },
+    [luminosity],
+  );
 
-      // Add listener for system theme changes
-      window
-        .matchMedia("(prefers-color-scheme: dark)")
-        .addEventListener("change", (e) => {
-          document.documentElement.classList.toggle("dark", e.matches);
-        });
-    } else {
-      document.documentElement.classList.toggle("dark", theme === "dark");
+  function handleThemeChange(theme: Theme) {
+    playBlur(
+      darkOrLightLuminosity() === "dark"
+        ? "rgba(0, 0, 0, 0.9)"
+        : "rgba(255, 255, 255, 0.9)",
+    );
+    console.log("handleThemeChange", theme);
+    for (const luminosity of Object.keys(THEME_OPTIONS)) {
+      for (const option of THEME_OPTIONS[
+        luminosity as keyof typeof THEME_OPTIONS
+      ]) {
+        document.documentElement.classList.remove(option);
+      }
     }
+    document.documentElement.classList.add(theme);
 
     setTheme(theme);
   }
 
   const value: PreferencesContext = {
     isMounted: isMounted,
-    theme,
-    setTheme: handleThemeChange,
+    luminosity,
+    setLuminosity,
     toggleDarkMode: () => {
-      console.log("toggleDarkMode, ", isDarkMode());
-      handleThemeChange(isDarkMode() ? "light" : "dark");
+      const oppositeLuminosity =
+        darkOrLightLuminosity() === "dark" ? "light" : "dark";
+      localStorage.setItem(
+        DEFAULT_PREFERENCES.luminosity.key,
+        oppositeLuminosity,
+      );
+      setLuminosity(oppositeLuminosity);
+      applyRandomTheme(oppositeLuminosity);
     },
-    isDarkMode: () => isDarkMode(),
+    applyRandomTheme,
+    isDarkMode: () => darkOrLightLuminosity() === "dark",
+    theme,
+    setTheme,
   };
 
   if (!isMounted) {
@@ -120,15 +206,9 @@ export function PreferencesProvider(props: { children: React.ReactNode }) {
       <script
         dangerouslySetInnerHTML={{
           __html: `
-          let isDark = false;
-          const storedTheme = localStorage.getItem("${DEFAULT_PREFERENCES.theme.key}");
-          if (storedTheme === "dark") {
-            isDark = true;
-          } else if (storedTheme === "system" && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            isDark = true;
-          }
-          if (isDark) {
-            document.documentElement.classList.add('dark');
+          const storedTheme = localStorage.getItem("${DEFAULT_PREFERENCES.luminosity.key}");
+          if (storedTheme) {
+            document.documentElement.classList.add(storedTheme);
           }
         `,
         }}
@@ -146,7 +226,3 @@ export const usePreferences = () => {
 
   return context;
 };
-
-export function isDarkMode() {
-  return document.documentElement.classList.contains("dark");
-}
