@@ -30,31 +30,22 @@ export default function Home() {
   }, []);
 
   return (
-    <>
-      <div className="flex h-safe-area flex-col bg-background">
-        <VStack className="ml-10 mt-24 w-full" ySpacing="top">
-          <h1 className="text-5xl font-extrabold tracking-tight sm:text-[5rem]">
-            {`What's up! I'm`}
-          </h1>
-          <h1 className="h-20 text-5xl font-extrabold tracking-tight sm:text-[5rem]">
-            <GradientText
-              className={themeRef.current}
-              style={{
-                fontFamily: themeRef.current ? `var(--theme-font-sans)` : "",
-              }}
-            >
-              Miles
-            </GradientText>
-          </h1>
-        </VStack>
-      </div>
-      <div className="flex h-safe-area flex-col items-center justify-center bg-background">
-        <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16">
-          <h1 className="text-5xl font-extrabold tracking-tight sm:text-[5rem]">
-            More content here for scrolling
-          </h1>
-        </div>
-      </div>
-    </>
+    <div className="flex h-safe-area flex-col bg-background">
+      <VStack className="ml-10 mt-24 w-full" ySpacing="top">
+        <h1 className="text-5xl font-extrabold tracking-tight sm:text-[5rem]">
+          {`What's up! I'm`}
+        </h1>
+        <h1 className="h-20 text-5xl font-extrabold tracking-tight sm:text-[5rem]">
+          <GradientText
+            className={themeRef.current}
+            style={{
+              fontFamily: themeRef.current ? `var(--theme-font-sans)` : "",
+            }}
+          >
+            Miles Fritzmather
+          </GradientText>
+        </h1>
+      </VStack>
+    </div>
   );
 }
