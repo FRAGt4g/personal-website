@@ -21,8 +21,8 @@ export type EphemeralPrefernceValue<T> = {
 };
 
 export const THEME_OPTIONS = {
-  dark: ["dark", "draconic", "cyberpunk", "space"],
-  light: ["light", "aquatic", "forest", "desert"],
+  dark: ["dark", "draconic", "cyberpunk", "space", "retro"],
+  light: ["light", "aquatic", "forest", "desert", "lunar"],
 } as const;
 
 export type Theme = (typeof THEME_OPTIONS)[keyof typeof THEME_OPTIONS][number];
@@ -37,8 +37,9 @@ export type StoredPreferences = {
 
 export type EphemeralPreferences = {
   theme: EphemeralPrefernceValue<Theme> & {
-    applyRandomTheme: () => void;
+    applyRandomTheme: (mustBeNew?: boolean) => void;
     setTheme: (theme: Theme) => void;
+    getAllowedThemes: () => readonly Theme[];
   };
 };
 
@@ -53,6 +54,7 @@ export const DEFAULT_PREFERENCES: StoredPreferences & EphemeralPreferences = {
     value: "light",
     applyRandomTheme: () => null,
     setTheme: () => null,
+    getAllowedThemes: () => THEME_OPTIONS.dark,
   },
 };
 
@@ -72,13 +74,13 @@ type ExtrasPart<T extends Record<string, { value: unknown }>> = {
   };
 };
 
-type FlattenOneLevel<T extends Record<string, object>> = {
-  [K in keyof T]: T[K] extends object
-    ? keyof T[K] extends never
+type FlattenOneLevel<T extends Record<string, { value: unknown }>> = {
+  [K in keyof ExtrasPart<T>]: ExtrasPart<T>[K] extends object
+    ? keyof ExtrasPart<T>[K] extends never
       ? never
-      : T[K]
+      : ExtrasPart<T>[K]
     : never;
-}[keyof T] extends infer U
+}[keyof ExtrasPart<T>] extends infer U
   ? U extends object
     ? { [K in keyof U]: U[K] }
     : never
@@ -89,12 +91,12 @@ type PreferencesContext = {
 } & ExpandOut<
   ValuesPart<StoredPreferences> &
     SettersPart<StoredPreferences> &
-    FlattenOneLevel<ExtrasPart<StoredPreferences>>
+    FlattenOneLevel<StoredPreferences>
 > &
   ExpandOut<
     ValuesPart<EphemeralPreferences> &
       SettersPart<EphemeralPreferences> &
-      FlattenOneLevel<ExtrasPart<EphemeralPreferences>>
+      FlattenOneLevel<EphemeralPreferences>
   >;
 
 const PreferencesProviderContext = createContext<PreferencesContext>(
@@ -120,7 +122,6 @@ export function PreferencesProvider(props: { children: React.ReactNode }) {
 
   function getPrefersDarkMode() {
     const a = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    console.log("getPrefersDarkMode", a);
     return a;
   }
 
@@ -137,7 +138,6 @@ export function PreferencesProvider(props: { children: React.ReactNode }) {
       DEFAULT_PREFERENCES.luminosity.key,
     ) as PREFERENCE_PreferredLuminosity | null;
     if (storedTheme) {
-      console.log("storedTheme", storedTheme);
       setLuminosity(storedTheme);
       applyRandomTheme(storedTheme);
     } else {
@@ -148,12 +148,18 @@ export function PreferencesProvider(props: { children: React.ReactNode }) {
   }, []);
 
   const applyRandomTheme = useCallback(
-    (_luminosity?: PREFERENCE_PreferredLuminosity) => {
+    (_luminosity?: PREFERENCE_PreferredLuminosity, mustBeNew?: boolean) => {
       const l = _luminosity ?? luminosity;
-      const options =
-        THEME_OPTIONS[l === "system" ? darkOrLightLuminosity() : l];
-      const a = options[Math.floor(Math.random() * options.length)] as Theme;
-      handleThemeChange(a);
+      const options = THEME_OPTIONS[
+        l === "system" ? darkOrLightLuminosity() : l
+      ].filter((option) => (mustBeNew ? option !== theme : true)) as Theme[];
+      const randomTheme = options[
+        Math.floor(Math.random() * options.length)
+      ] as Theme;
+      console.log("options", options);
+      console.log("theme", randomTheme);
+
+      handleThemeChange(randomTheme);
     },
     [luminosity],
   );
@@ -164,7 +170,6 @@ export function PreferencesProvider(props: { children: React.ReactNode }) {
         ? "rgba(0, 0, 0, 0.9)"
         : "rgba(255, 255, 255, 0.9)",
     );
-    console.log("handleThemeChange", theme);
     for (const luminosity of Object.keys(THEME_OPTIONS)) {
       for (const option of THEME_OPTIONS[
         luminosity as keyof typeof THEME_OPTIONS
@@ -173,6 +178,7 @@ export function PreferencesProvider(props: { children: React.ReactNode }) {
       }
     }
     document.documentElement.classList.add(theme);
+    console.log("theme", theme);
 
     setTheme(theme);
   }
@@ -191,10 +197,13 @@ export function PreferencesProvider(props: { children: React.ReactNode }) {
       setLuminosity(oppositeLuminosity);
       applyRandomTheme(oppositeLuminosity);
     },
-    applyRandomTheme,
+    applyRandomTheme: (mustBeNew?: boolean) => {
+      applyRandomTheme(undefined, mustBeNew);
+    },
     isDarkMode: () => darkOrLightLuminosity() === "dark",
     theme,
     setTheme,
+    getAllowedThemes: () => THEME_OPTIONS[darkOrLightLuminosity()],
   };
 
   if (!isMounted) {

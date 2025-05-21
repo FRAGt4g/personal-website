@@ -4,7 +4,9 @@ import { GeistSans } from "geist/font/sans";
 import { type Metadata } from "next";
 import PageBlur from "~/components/PageBlur";
 import { PreferencesProvider } from "~/components/providers/Preferences-Provider";
+import SettingsButton from "~/components/SettingsButton";
 import ThemeHint from "~/components/ThemeHint";
+import { env } from "~/env";
 import Navbar from "../components/Navbar";
 
 export const metadata: Metadata = {
@@ -25,7 +27,10 @@ export default function RootLayout({
           <main className="flex min-h-safe-area flex-col">
             <div className="flex-1">{children}</div>
           </main>
-          <ThemeHint corner="bottom-right" />
+          {env.NODE_ENV === "development" && (
+            <ThemeHint corner="bottom-right" />
+          )}
+          <SettingsButton corner="top-right" />
         </PreferencesProvider>
       </body>
     </html>

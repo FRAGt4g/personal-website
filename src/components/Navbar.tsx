@@ -31,7 +31,7 @@ const Navbar = () => {
       <BetterLink
         key={index}
         href={item.href}
-        className={`relative py-2 after:absolute after:bottom-2 after:left-0 after:h-[2px] after:w-0 after:bg-gradient-to-r after:from-teal-300 after:to-teal-500 after:transition-all hover:after:w-full dark:from-teal-300 dark:to-teal-500 ${item.href === pathname ? "font-bold" : "opacity-70"}`}
+        className={`relative py-2 after:absolute after:bottom-2 after:left-0 after:h-[2px] after:w-0 after:bg-gradient-to-r after:from-primary after:to-accent after:transition-all hover:after:w-full ${item.href === pathname ? "font-bold" : "opacity-70"}`}
       >
         {item.label}
       </BetterLink>
@@ -74,7 +74,6 @@ const Navbar = () => {
             <div className="flex flex-row items-center justify-end gap-4 space-x-6 lg:space-x-0">
               <DarkModeToggle />
               <RandomThemeToggle />
-              {/* <SetThemeToSpecificTheme theme="draconic" /> */}
             </div>
             <div className="flex-col justify-end md:flex lg:hidden">
               <button onClick={toggleNavbar}>
