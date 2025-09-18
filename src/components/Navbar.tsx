@@ -4,8 +4,10 @@ import { Menu, X } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { cn } from "~/lib/utils";
+import { TextReveal } from "./basics/reveal";
 import BetterLink from "./BetterLink";
-import DarkModeToggle, { RandomThemeToggle } from "./DarkModeToggle";
+import { SuperThemeToggle } from "./DarkModeToggle";
+import GradientText from "./GradientText";
 interface NavItem {
   href: string;
   label: string;
@@ -13,8 +15,10 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { label: "About Me", href: "/about" },
-  { label: "Other", href: "#" },
-  { label: "Misc", href: "#" },
+  { label: "Projects", href: "/projects" },
+  { label: "Blog", href: "/blog" },
+  { label: "Contact", href: "/contact" },
+  { label: "Resume", href: "/resume" },
 ];
 
 const Navbar = () => {
@@ -27,15 +31,22 @@ const Navbar = () => {
   };
 
   const Links: React.FC = () => {
-    return navItems.map((item: NavItem, index: number) => (
-      <BetterLink
-        key={index}
-        href={item.href}
-        className={`relative py-2 after:absolute after:bottom-2 after:left-0 after:h-[2px] after:w-0 after:bg-gradient-to-r after:from-primary after:to-accent after:transition-all hover:after:w-full ${item.href === pathname ? "font-bold" : "opacity-70"}`}
-      >
-        {item.label}
-      </BetterLink>
-    ));
+    return navItems.map((item: NavItem, index: number) => {
+      const isActive = item.href === pathname;
+      return (
+        <BetterLink
+          key={index}
+          href={item.href}
+          className={cn(
+            // "relative py-2 after:absolute after:bottom-2 after:left-0 after:h-[2px] after:w-0 after:bg-gradient-to-r after:from-primary after:to-accent after:transition-all hover:after:w-full",
+            "relative py-2",
+            isActive ? "font-bold" : "opacity-70",
+          )}
+        >
+          {isActive ? <TextReveal>{item.label}</TextReveal> : item.label}
+        </BetterLink>
+      );
+    });
   };
 
   useEffect(() => {
@@ -64,7 +75,7 @@ const Navbar = () => {
             <BetterLink href="/" className="p-0">
               <div className="flex flex-shrink-0 items-center">
                 <span className="text-xl tracking-tight">
-                  Miles Fritzmather
+                  <GradientText>Miles Fritzmather</GradientText>
                 </span>
               </div>
             </BetterLink>
@@ -72,8 +83,7 @@ const Navbar = () => {
               <Links />
             </div>
             <div className="flex flex-row items-center justify-end gap-4 space-x-6 lg:space-x-0">
-              <DarkModeToggle />
-              <RandomThemeToggle />
+              <SuperThemeToggle />
             </div>
             <div className="flex-col justify-end md:flex lg:hidden">
               <button onClick={toggleNavbar}>

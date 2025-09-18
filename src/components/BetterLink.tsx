@@ -1,6 +1,7 @@
 import { useRouter } from "next/navigation";
 import { forwardRef } from "react";
 import { goTo } from "./PageBlur";
+import Popup from "./Popup";
 import { usePreferences } from "./providers/Preferences-Provider";
 
 type BetterLinkProps = {
@@ -14,17 +15,19 @@ const BetterLink = forwardRef<HTMLDivElement, BetterLinkProps>(
     const router = useRouter();
 
     return (
-      <div
-        ref={ref}
-        onClick={() => {
-          applyRandomTheme();
-          goTo(router, href);
-        }}
-        className="cursor-pointer hover:underline"
-        {...props}
-      >
-        {children}
-      </div>
+      <Popup>
+        <div
+          ref={ref}
+          onClick={() => {
+            applyRandomTheme();
+            goTo(router, href);
+          }}
+          className="cursor-pointer"
+          {...props}
+        >
+          {children}
+        </div>
+      </Popup>
     );
   },
 );

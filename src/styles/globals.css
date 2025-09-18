@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter&family=Roboto&family=Open+Sans&family=Lato&family=Montserrat&family=Poppins&family=Source+Sans+Pro&family=Ubuntu&family=Raleway&family=Nunito&display=swap");
+@import "themes.css";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -32,117 +34,7 @@
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
   }
-  .dark {
-    --primary: 0 0% 98%;
-    --secondary: 0 0% 14.9%;
-    --accent: 0 0% 14.9%;
-    --background: 0 0% 3.9%;
-    --foreground: 0 0% 98%;
-    --muted: 0 0% 14.9%;
-    --text: 210 40% 98%;
-    --theme-font-sans: "Calibri", sans-serif;
-    --card: 0 0% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 0 0% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary-foreground: 0 0% 9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted-foreground: 0 0% 63.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 14.9%;
-    --input: 0 0% 14.9%;
-    --ring: 0 0% 83.1%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
-  }
-  .draconic {
-    --primary: 0 84% 60%;
-    --secondary: 0 50% 20%;
-    --accent: 0 70% 45%;
-    --background: 0 50% 8%;
-    --foreground: 0 30% 95%;
-    --muted: 0 40% 15%;
-    --text: 0 30% 95%;
-    --theme-font-sans: "Times New Roman", sans-serif;
-  }
-  .aquatic {
-    --primary: 200 90% 40%; /* Deep ocean blue */
-    --secondary: 180 80% 90%; /* Light aqua */
-    --accent: 190 100% 60%; /* Aqua highlight */
-    --background: 190 50% 98%; /* Very pale blue */
-    --foreground: 200 20% 20%;
-    --muted: 190 40% 85%;
-    --text: 200 25% 15%;
-    --theme-font-sans: "Playpen Sans Arabic", cursive;
-  }
-  .forest {
-    --primary: 120 60% 30%; /* Forest green */
-    --secondary: 90 30% 85%; /* Pale green */
-    --accent: 100 50% 50%; /* Soft leaf green */
-    --background: 90 20% 95%; /* Light moss */
-    --foreground: 120 20% 15%;
-    --muted: 120 30% 80%;
-    --text: 120 20% 10%;
-    --theme-font-sans: "Georgia", serif;
-  }
-  .desert {
-    --primary: 30 80% 60%; /* Sandy orange */
-    --secondary: 45 60% 85%; /* Soft sun yellow */
-    --accent: 20 70% 50%; /* Desert rock red */
-    --background: 40 50% 95%;
-    --foreground: 30 30% 15%;
-    --muted: 35 50% 80%;
-    --text: 30 20% 10%;
-    --theme-font-sans: "Palatino", serif;
-  }
-  .cyberpunk {
-    --primary: 290 80% 60%; /* Neon purple */
-    --secondary: 200 90% 60%; /* Bright cyan */
-    --accent: 320 100% 55%; /* Hot pink */
-    --background: 250 30% 10%; /* Deep space black */
-    --foreground: 210 30% 95%;
-    --muted: 250 20% 20%;
-    --text: 210 30% 98%;
-    --theme-font-sans: "Orbitron", sans-serif;
-  }
-  .space {
-    --primary: 230 100% 85%; /* Star light blue */
-    --secondary: 260 80% 30%; /* Deep purple nebula */
-    --accent: 300 100% 70%; /* Cosmic pink */
-    --background: 240 30% 5%; /* Space black */
-    --foreground: 220 20% 95%;
-    --muted: 240 10% 20%;
-    --text: 220 15% 95%;
-    --theme-font-sans: "Fira Code", monospace;
-  }
-  .retro {
-    --primary: 222.2 47.4% 11.2%;
-    --secondary: 210 40% 96.1%;
-    --accent: 210 40% 96.1%;
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --muted: 210 40% 96.1%;
-    --text: 222.2 84% 4.9%;
-    --theme-font-sans: "Comic Sans MS", sans-serif;
-  }
-  .lunar {
-    --primary: 222.2 47.4% 11.2%;
-    --secondary: 210 40% 96.1%;
-    --accent: 210 40% 96.1%;
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --muted: 210 40% 96.1%;
-    --text: 222.2 84% 4.9%;
-    --theme-font-sans: "Comic Sans MS", sans-serif;
-  }
 }
-
-
 
 @layer base {
   * {
@@ -152,3 +44,7 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* body {
+  cursor: none !important;
+} */

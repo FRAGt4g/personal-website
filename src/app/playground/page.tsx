@@ -11,11 +11,13 @@ import {
 } from "~/components/Shadcn/tabs";
 import { cn } from "~/lib/utils";
 import AllThemes from "./pages/allthemes";
+import StatisticalAnalysis from "./pages/stats";
 
 export default function SandboxPage() {
   const router = useRouter();
   const tabs: Record<string, React.ReactNode> = {
     "All Themes": <AllThemes />,
+    "Statistical Analysis": <StatisticalAnalysis />,
   };
 
   const searchParams = useSearchParams();
@@ -72,7 +74,7 @@ export default function SandboxPage() {
                 key={tab}
                 value={tab}
                 onClick={() => {
-                  router.push(`/Sandbox?tab=${encodeURIComponent(tab)}`);
+                  router.push(`/playground?tab=${encodeURIComponent(tab)}`);
                   setSelectedTab(tab);
                 }}
               >

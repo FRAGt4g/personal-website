@@ -8,9 +8,10 @@ import {
   useState,
 } from "react";
 import { playBlur } from "~/components/PageBlur";
+import { type Theme, THEME_OPTIONS } from "~/styles/Themes";
 
 type ExpandOut<T> = T extends infer R ? { [K in keyof R]: R[K] } : never;
-
+type Shape = Record<string, { value: unknown }>;
 export type StoredPrefernceValue<T> = {
   value: T;
   key: string;
@@ -20,12 +21,39 @@ export type EphemeralPrefernceValue<T> = {
   value: T;
 };
 
-export const THEME_OPTIONS = {
-  dark: ["dark", "draconic", "cyberpunk", "space", "retro"],
-  light: ["light", "aquatic", "forest", "desert", "lunar"],
-} as const;
+type PreferencesContext = {
+  isMounted: boolean;
+} & FlattenedAndExpandedValues<EphemeralPreferences> &
+  FlattenedAndExpandedValues<StoredPreferences>;
 
-export type Theme = (typeof THEME_OPTIONS)[keyof typeof THEME_OPTIONS][number];
+type AdditionalValues<T extends Record<string, { value: unknown }>> = {
+  [K in keyof T as `${K & string}`]: {
+    [k in keyof Omit<T[K], "key" | "value">]: T[K][k];
+  };
+};
+
+type FlattenedAndExpandedValues<T extends Shape> = ExpandOut<
+  {
+    [K in keyof T]: T[K]["value"];
+  } & {
+    [K in keyof T as `set${Capitalize<K & string>}`]: (
+      value: T[K]["value"],
+    ) => void;
+  } & {
+      [K in keyof AdditionalValues<T>]: AdditionalValues<T>[K] extends object
+        ? keyof AdditionalValues<T>[K] extends never
+          ? never
+          : AdditionalValues<T>[K]
+        : never;
+    }[keyof AdditionalValues<T>] extends infer U
+    ? U extends object
+      ? { [K in keyof U]: U[K] }
+      : never
+    : never
+>;
+
+/** ---------------------------------------------------------------------------------------------------- **/
+
 export type PREFERENCE_PreferredLuminosity = "system" | "dark" | "light";
 
 export type StoredPreferences = {
@@ -38,12 +66,15 @@ export type StoredPreferences = {
 export type EphemeralPreferences = {
   theme: EphemeralPrefernceValue<Theme> & {
     applyRandomTheme: (mustBeNew?: boolean) => void;
-    setTheme: (theme: Theme) => void;
-    getAllowedThemes: () => readonly Theme[];
+    getApplicableThemes: () => readonly Theme[];
+    applyTheme: (theme: Theme) => void;
+    getRandomTheme: (mustBeNew?: boolean) => Theme;
   };
 };
 
-export const DEFAULT_PREFERENCES: StoredPreferences & EphemeralPreferences = {
+export const DEFAULT_PREFERENCES: ExpandOut<
+  StoredPreferences & EphemeralPreferences
+> = {
   luminosity: {
     value: "system",
     key: "ui-theme",
@@ -53,51 +84,11 @@ export const DEFAULT_PREFERENCES: StoredPreferences & EphemeralPreferences = {
   theme: {
     value: "light",
     applyRandomTheme: () => null,
-    setTheme: () => null,
-    getAllowedThemes: () => THEME_OPTIONS.dark,
+    getApplicableThemes: () => THEME_OPTIONS.dark,
+    applyTheme: () => null,
+    getRandomTheme: () => "light",
   },
 };
-
-type ValuesPart<T extends Record<string, { value: unknown }>> = {
-  [K in keyof T]: T[K]["value"];
-};
-
-type SettersPart<T extends Record<string, { value: unknown }>> = {
-  [K in keyof T as `set${Capitalize<K & string>}`]: (
-    value: T[K]["value"],
-  ) => void;
-};
-
-type ExtrasPart<T extends Record<string, { value: unknown }>> = {
-  [K in keyof T as `${K & string}`]: {
-    [k in keyof Omit<T[K], "key" | "value">]: T[K][k];
-  };
-};
-
-type FlattenOneLevel<T extends Record<string, { value: unknown }>> = {
-  [K in keyof ExtrasPart<T>]: ExtrasPart<T>[K] extends object
-    ? keyof ExtrasPart<T>[K] extends never
-      ? never
-      : ExtrasPart<T>[K]
-    : never;
-}[keyof ExtrasPart<T>] extends infer U
-  ? U extends object
-    ? { [K in keyof U]: U[K] }
-    : never
-  : never;
-
-type PreferencesContext = {
-  isMounted: boolean;
-} & ExpandOut<
-  ValuesPart<StoredPreferences> &
-    SettersPart<StoredPreferences> &
-    FlattenOneLevel<StoredPreferences>
-> &
-  ExpandOut<
-    ValuesPart<EphemeralPreferences> &
-      SettersPart<EphemeralPreferences> &
-      FlattenOneLevel<EphemeralPreferences>
-  >;
 
 const PreferencesProviderContext = createContext<PreferencesContext>(
   Object.entries(DEFAULT_PREFERENCES).reduce(
@@ -152,10 +143,8 @@ export function PreferencesProvider(props: { children: React.ReactNode }) {
       const l = _luminosity ?? luminosity;
       const options = THEME_OPTIONS[
         l === "system" ? darkOrLightLuminosity() : l
-      ].filter((option) => (mustBeNew ? option !== theme : true)) as Theme[];
-      const randomTheme = options[
-        Math.floor(Math.random() * options.length)
-      ] as Theme;
+      ].filter((option) => (mustBeNew ? option !== theme : true));
+      const randomTheme = options[Math.floor(Math.random() * options.length)]!;
       console.log("options", options);
       console.log("theme", randomTheme);
 
@@ -174,10 +163,10 @@ export function PreferencesProvider(props: { children: React.ReactNode }) {
       for (const option of THEME_OPTIONS[
         luminosity as keyof typeof THEME_OPTIONS
       ]) {
-        document.documentElement.classList.remove(option);
+        document.body.classList.remove(option);
       }
     }
-    document.documentElement.classList.add(theme);
+    document.body.classList.add(theme);
     console.log("theme", theme);
 
     setTheme(theme);
@@ -203,7 +192,16 @@ export function PreferencesProvider(props: { children: React.ReactNode }) {
     isDarkMode: () => darkOrLightLuminosity() === "dark",
     theme,
     setTheme,
-    getAllowedThemes: () => THEME_OPTIONS[darkOrLightLuminosity()],
+    applyTheme: (theme: Theme) => {
+      handleThemeChange(theme);
+    },
+    getApplicableThemes: () => THEME_OPTIONS[darkOrLightLuminosity()],
+    getRandomTheme: (mustBeNew?: boolean) => {
+      const options = THEME_OPTIONS[darkOrLightLuminosity()].filter((option) =>
+        mustBeNew ? option !== theme : true,
+      );
+      return options[Math.floor(Math.random() * options.length)]!;
+    },
   };
 
   if (!isMounted) {
