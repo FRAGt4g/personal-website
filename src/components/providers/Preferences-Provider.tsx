@@ -82,11 +82,11 @@ export const DEFAULT_PREFERENCES: ExpandOut<
     toggleDarkMode: () => null,
   },
   theme: {
-    value: "light",
+    value: "dark",
     applyRandomTheme: () => null,
     getApplicableThemes: () => THEME_OPTIONS.dark,
     applyTheme: () => null,
-    getRandomTheme: () => "light",
+    getRandomTheme: () => "dark",
   },
 };
 

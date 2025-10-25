@@ -1,12 +1,12 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
+import { type AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { cn } from "~/lib/utils";
 
 const FADE_DURATION = 200;
 const PageBlur = () => {
-  const pageBlur = document.getElementById("page-blur")?.dataset;
+  // const pageBlur = document.getElementById("page-blur")?.dataset;
 
   return (
     <motion.div

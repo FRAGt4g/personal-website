@@ -7,15 +7,17 @@ import { useMousePosition } from "./useMousePosition";
 interface PopupProps {
   children: ReactNode;
   pullForce?: number; // Allow customization of pull force
-  addShadow?: boolean; // Allow toggling shadow effect
   scaleIncrease?: number; // Allow customization of scale increase on hover
+  shrinkOnClick?: boolean; // Allow shrinking effect on click
+  clickShrinkAmount?: number; // Amount to shrink on click
 }
 
 const Popup = ({
   children,
   pullForce = 1 / 5,
-  addShadow = false,
-  scaleIncrease = 1.2,
+  scaleIncrease = 1.3,
+  shrinkOnClick = false,
+  clickShrinkAmount = 0.4,
 }: PopupProps) => {
   const mousePos = useMousePosition();
   const ref = useRef<HTMLDivElement>(null);
@@ -38,9 +40,15 @@ const Popup = ({
         scale: scaleIncrease,
         x: (getCenterPosition().x - mousePos.x) * -pullForce,
         y: (getCenterPosition().y - mousePos.y) * -pullForce,
-        boxShadow: addShadow ? "0px 10px 20px rgba(0, 0, 0, 0.2)" : undefined,
         zIndex: 999,
       }}
+      whileTap={
+        shrinkOnClick
+          ? {
+              scale: scaleIncrease - clickShrinkAmount,
+            }
+          : {}
+      }
       transition={{ type: "spring", stiffness: 500, damping: 50 }}
       className="inline-block"
     >

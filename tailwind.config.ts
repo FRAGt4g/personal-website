@@ -67,6 +67,14 @@ export default {
       transitionProperty: {
         "bg-pos": "background-position",
       },
+      width: {
+        content: "1100px",
+        navbar: "1200px",
+      },
+      maxWidth: {
+        content: "1100px",
+        navbar: "1200px",
+      },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",

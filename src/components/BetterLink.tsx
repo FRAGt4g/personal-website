@@ -15,7 +15,7 @@ const BetterLink = forwardRef<HTMLDivElement, BetterLinkProps>(
     const router = useRouter();
 
     return (
-      <Popup>
+      <Popup shrinkOnClick>
         <div
           ref={ref}
           onClick={() => {

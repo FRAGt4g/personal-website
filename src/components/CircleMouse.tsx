@@ -1,5 +1,6 @@
 "use client";
 
+import { motion } from "framer-motion";
 import { useEffect } from "react";
 
 const CircleMouse = () => {
@@ -19,9 +20,16 @@ const CircleMouse = () => {
   }, []);
 
   return (
-    <div
+    <motion.div
       id="circle-mouse"
-      className="pointer-events-none fixed left-0 top-0 z-50 h-6 w-6 -translate-x-1/2 -translate-y-1/2 transform rounded-full border-2 border-gray-500 backdrop-invert transition-transform duration-100 ease-out"
+      whileTap={{ scale: 2 }}
+      style={{
+        zIndex: 9999,
+        backdropFilter: "invert(0.8)",
+        height: "1rem",
+        width: "1rem",
+      }}
+      className="pointer-events-none fixed left-0 top-0 -translate-x-1/2 -translate-y-1/2 transform rounded-full border-2 border-black bg-white/10 backdrop-blur-sm transition-transform duration-100 ease-out"
     />
   );
 };

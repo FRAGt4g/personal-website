@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useRef, useState } from "react";
 import { cn } from "~/lib/utils";
 import { GlitchTextWithExternalTimer } from "./GlitchText";
@@ -19,7 +21,7 @@ export function RemoteRealGlitch({
   tickSpeedRange = [100, 200],
   trigger,
   shouldResetStyle = true,
-}: RealGlitchProps & { trigger: boolean }) {
+}: RealGlitchProps & { trigger?: boolean }) {
   const timerRef = useRef(0);
   const intervalId = useRef<NodeJS.Timeout | undefined>(undefined);
   const timerInterval = 100;

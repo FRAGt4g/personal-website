@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Settings2 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "~/lib/utils";
+import { THEME_OPTIONS } from "~/styles/Themes";
 import { HStack, VStack } from "./HelperDivs";
 import {
   DropdownMenu,
@@ -12,7 +13,6 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "./Shadcn/dropdown-menu";
-import { THEME_OPTIONS } from "./providers/Preferences-Provider";
 
 const tailwindCornerMap = {
   "bottom-left": "bottom-2 left-2",

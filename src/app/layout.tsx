@@ -1,12 +1,20 @@
 import "~/styles/globals.css";
 
-import { GeistSans } from "geist/font/sans";
 import { type Metadata } from "next";
+import { Karla } from "next/font/google";
+import BackgroundNoiseEffect from "~/components/BackgroundEffects";
+import CircleMouse from "~/components/CircleMouse";
 import PageBlur from "~/components/PageBlur";
 import { PreferencesProvider } from "~/components/providers/Preferences-Provider";
+import SettingsButton from "~/components/SettingsButton";
 import ThemeHint from "~/components/ThemeHint";
 import { env } from "~/env";
 import Navbar from "../components/Navbar";
+
+const karla = Karla({
+  subsets: ["latin"],
+  weight: ["200", "300", "400", "500", "600", "700", "800"],
+});
 
 export const metadata: Metadata = {
   title: "Miles Fritzmather",
@@ -18,19 +26,20 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${GeistSans.variable}`}>
-      <body style={{ fontFamily: "var(--theme-font-sans)" }}>
+    <html lang="en">
+      <body className={`${karla.className}`}>
         <PreferencesProvider>
-          {/* <CircleMouse /> */}
+          <BackgroundNoiseEffect />
           <PageBlur />
           <Navbar />
-          <main className="mx-auto flex min-h-safe-area max-w-screen-2xl flex-col">
+          <CircleMouse />
+          <main className="max-w-content mx-auto flex flex-col">
             <div className="flex-1">{children}</div>
           </main>
           {env.NODE_ENV === "development" && (
             <ThemeHint corner="bottom-right" />
           )}
-          {/* <SettingsButton corner="top-right" /> */}
+          <SettingsButton corner="top-right" />
         </PreferencesProvider>
       </body>
     </html>
