@@ -1,5 +1,3 @@
-"use client";
-
 import Link from "next/link";
 import { FaEnvelope, FaFilePdf, FaGithub, FaLinkedin } from "react-icons/fa";
 import Container from "../Container";
@@ -23,7 +21,7 @@ const socials = {
     icon: FaFilePdf,
     link: "/Miles_Fritzmather_Resume.pdf",
   },
-};
+} as const;
 
 export const AllSocials = () => {
   return (

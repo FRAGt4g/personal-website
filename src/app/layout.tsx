@@ -2,14 +2,11 @@ import "~/styles/globals.css";
 
 import { type Metadata } from "next";
 import { Karla } from "next/font/google";
-import BackgroundNoiseEffect from "~/components/BackgroundEffects";
-import CircleMouse from "~/components/CircleMouse";
 import PageBlur from "~/components/PageBlur";
 import { PreferencesProvider } from "~/components/providers/Preferences-Provider";
-import SettingsButton from "~/components/SettingsButton";
-import ThemeHint from "~/components/ThemeHint";
-import { env } from "~/env";
 import Navbar from "../components/Navbar";
+import Footer from "./footer";
+import GooGradient from "./home/goo-gradient";
 
 const karla = Karla({
   subsets: ["latin"],
@@ -29,17 +26,20 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${karla.className}`}>
         <PreferencesProvider>
-          <BackgroundNoiseEffect />
+          <GooGradient />
+          {/* <BackgroundNoiseEffect />
+          <BackgroundMovingGradient /> */}
           <PageBlur />
           <Navbar />
-          <CircleMouse />
+          {/* <CircleMouse /> */}
           <main className="max-w-content mx-auto flex flex-col">
             <div className="flex-1">{children}</div>
           </main>
-          {env.NODE_ENV === "development" && (
+          <Footer />
+          {/* {env.NODE_ENV === "development" && (
             <ThemeHint corner="bottom-right" />
-          )}
-          <SettingsButton corner="top-right" />
+            )} */}
+          {/* <SettingsButton corner="top-right" /> */}
         </PreferencesProvider>
       </body>
     </html>

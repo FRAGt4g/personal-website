@@ -1,8 +1,8 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { Dice5Icon, Moon, Sun, XIcon } from "lucide-react";
 import { useRef, useState } from "react";
-import { cn } from "~/lib/utils";
 import { THEME_OPTIONS, type Theme } from "~/styles/Themes";
+import Container from "./Container";
 import { usePreferences } from "./providers/Preferences-Provider";
 import {
   Select,
@@ -48,8 +48,17 @@ export const SuperThemeToggle = () => {
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const clickWindow = 300;
 
+  function onLongPress() {
+    applyRandomTheme();
+    setOpen(false);
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+  }
+
   return (
-    <motion.div
+    // <Popup shrinkOnClick>
+    <Container
       onMouseDown={() => {
         if (open) return;
         lastPressDownRef.current = new Date().getTime();
@@ -59,20 +68,13 @@ export const SuperThemeToggle = () => {
         );
       }}
       onMouseUp={() => {
-        if (open) return;
-        const timeSinceLastPressDown =
-          new Date().getTime() - lastPressDownRef.current;
-        if (timeSinceLastPressDown < clickWindow) {
-          // Clicked the button
-          applyRandomTheme();
-          setOpen(false);
-          if (timeoutRef.current) {
-            clearTimeout(timeoutRef.current);
-          }
+        if (
+          !open &&
+          new Date().getTime() - lastPressDownRef.current < clickWindow
+        ) {
+          onLongPress();
         }
       }}
-      whileHover={{ scale: !open ? 1.1 : 1 }}
-      whileTap={{ scale: !open ? 0.9 : 1 }}
       animate={{
         width: open ? "300px" : "40px",
       }}
@@ -82,9 +84,7 @@ export const SuperThemeToggle = () => {
         damping: 17,
         duration: Math.max(0.2, clickWindow / 1000),
       }}
-      className={cn(
-        "flex flex-row items-center justify-between gap-2 rounded-full bg-primary p-2 text-background",
-      )}
+      className="h-fit w-fit rounded-full p-4"
       style={{
         cursor: open ? "default" : "pointer",
       }}
@@ -166,7 +166,8 @@ export const SuperThemeToggle = () => {
           </motion.div>
         )}
       </AnimatePresence>
-    </motion.div>
+    </Container>
+    // </Popup>
   );
 };
 

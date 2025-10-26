@@ -6,7 +6,7 @@ import { cn } from "~/lib/utils";
 import { usePreferences } from "./providers/Preferences-Provider";
 
 type ContainerProps = {
-  style?: "dark" | "light";
+  theme?: "dark" | "light";
 } & React.ComponentProps<typeof motion.div>;
 
 const shadowConfig = {
@@ -29,10 +29,10 @@ const shadowConfig = {
 };
 
 const Container = forwardRef<HTMLDivElement, ContainerProps>(
-  ({ children, className, style, ...props }, ref) => {
+  ({ children, style, className, theme, ...props }, ref) => {
     Container.displayName = "Container";
     const { isDarkMode } = usePreferences();
-    const containerStyle = style ?? (isDarkMode() ? "dark" : "light");
+    const containerStyle = theme ?? (isDarkMode() ? "dark" : "light");
 
     return (
       <motion.div
@@ -49,9 +49,10 @@ const Container = forwardRef<HTMLDivElement, ContainerProps>(
           cursor: "pointer",
           backgroundColor:
             containerStyle === "dark"
-              ? "rgba(26, 26, 26, 0.9)"
+              ? "rgba(26, 26, 26, 0.8)"
               : "rgba(237, 237, 237, 0.9)",
           boxShadow: Object.values(shadowConfig[containerStyle]).join(", "),
+          ...style,
         }}
         {...props}
       >

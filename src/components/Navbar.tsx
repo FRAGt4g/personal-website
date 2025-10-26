@@ -6,7 +6,7 @@ import { cn } from "~/lib/utils";
 import { TextReveal } from "./basics/reveal";
 import BetterLink from "./BetterLink";
 import Container from "./Container";
-import { SuperThemeToggle } from "./DarkModeToggle";
+import DarkModeToggle from "./DarkModeToggle";
 import GradientText from "./GradientText";
 interface NavItem {
   href: string;
@@ -47,7 +47,7 @@ const Navbar = () => {
   return (
     <header className="max-w-navbar fixed left-1/2 top-4 z-10 w-full -translate-x-1/2">
       <Container
-        className="mx-auto w-full"
+        className="mx-auto w-full py-4"
         initial={{ opacity: 0, y: -100 }}
         animate={{ opacity: atTopOfPage ? 0 : 1, y: atTopOfPage ? -100 : 0 }}
         transition={{
@@ -71,7 +71,8 @@ const Navbar = () => {
               <Links />
             </div>
             <div className="flex flex-row items-center justify-end gap-4 space-x-6 lg:space-x-0">
-              <SuperThemeToggle />
+              <DarkModeToggle />
+              {/* <SuperThemeToggle /> */}
             </div>
           </div>
         </nav>

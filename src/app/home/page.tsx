@@ -1,16 +1,22 @@
-import { AllSocials } from "~/components/basics/socials";
 import Container from "~/components/Container";
 import { RemoteRealGlitch } from "~/components/Glitch Effects/RealGlitch";
 import GradientText from "~/components/GradientText";
 import { VStack } from "~/components/HelperDivs";
 import Popup from "~/components/Popup";
+import { AllSocials } from "~/components/basics/socials";
 import BouncingArrow from "./bouncing-arrow";
 
 export default function Home() {
   return (
     <VStack ySpacing="top" xSpacing="center" className="w-full">
       <HeroBanner />
-      <AllSocials />
+      <AboutMe />
+      <AboutMe />
+      <AboutMe />
+      <AboutMe />
+      <AboutMe />
+      <AboutMe />
+      <AboutMe />
     </VStack>
   );
 }
@@ -42,6 +48,21 @@ const HeroBanner = () => {
       </Container>
       <AllSocials />
       <BouncingArrow />
+    </VStack>
+  );
+};
+
+const AboutMe = () => {
+  return (
+    <VStack centered gap={5} className="w-[100vw] bg-primary/10 p-10">
+      <h1 className="text-5xl font-extrabold tracking-tight sm:text-[5rem]">
+        About Me
+      </h1>
+      <p className="text-2xl">
+        I&apos;m a student at the University of Texas at Austin studying
+        Computer Science and Mathematics. I&apos;m interested in software
+        development, machine learning, and making cool stuff.
+      </p>
     </VStack>
   );
 };

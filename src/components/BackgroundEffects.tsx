@@ -18,17 +18,17 @@ export default function BackgroundNoiseEffect() {
         <feColorMatrix in="noise" type="saturate" values="0" />
       </>
     ),
-    // filter2: (
-    //   <>
-    //     <feTurbulence
-    //       baseFrequency="0.9"
-    //       numOctaves="4"
-    //       result="noise"
-    //       seed="2"
-    //     />
-    //     <feColorMatrix in="noise" type="saturate" values="0" />
-    //   </>
-    // ),
+    filter2: (
+      <>
+        <feTurbulence
+          baseFrequency="0.9"
+          numOctaves="4"
+          result="noise"
+          seed="2"
+        />
+        <feColorMatrix in="noise" type="saturate" values="0" />
+      </>
+    ),
   };
 
   return (
@@ -52,19 +52,11 @@ export default function BackgroundNoiseEffect() {
       </svg>
       <div className="pointer-events-none absolute inset-0">
         {/* Blur layers */}
-        {/* <div
-          className="absolute inset-0 h-full w-full bg-gradient-to-r from-transparent via-white/10 to-transparent"
-          style={{ filter: `blur(${blur}rem)` }}
-        />
         <div
-          className="absolute inset-0 h-full w-full bg-gradient-to-b from-transparent via-black/5 to-transparent"
-          style={{ filter: `blur(${blur * 0.7}rem)` }}
-        /> */}
-        <div className="absolute inset-0 h-full w-full blur-md" />
-        {/* <div
-          className="absolute inset-0 h-full w-full bg-gradient-to-b from-transparent via-black/5 to-transparent"
-          style={{ filter: `blur(${blur * 0.7}rem)` }}
-        /> */}
+          className="absolute inset-0 h-full w-full bg-green-50 blur-md"
+          style={{ zIndex: -3 }}
+        />
+
         {/* Noise overlay effects */}
         {Object.keys(filters).map((key) => (
           <div
