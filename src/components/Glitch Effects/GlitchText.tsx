@@ -3,8 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import { TextReveal } from "~/components/basics/reveal";
 import GradientText from "~/components/GradientText";
-import { usePreferences } from "~/components/providers/Preferences-Provider";
 import { cn } from "~/lib/utils";
+import { usePreferences } from "~/providers/Preferences-Provider";
 import { type Theme } from "~/styles/Themes";
 
 type GlitchTextProps = {
@@ -44,7 +44,7 @@ export function GlitchTextWithExternalTimer({
       if (renderCount.current === 2) {
         renderCount.current++;
       }
-      console.log(`${renderCount.current} render(s)`);
+      // console.log(`${renderCount.current} render(s)`);
       return;
     }
 
@@ -52,10 +52,10 @@ export function GlitchTextWithExternalTimer({
       setTheme(undefined);
     } else if (Math.abs(timer % tickDelay) < 100) {
       const newTheme = getRandomTheme();
-      console.log("newTheme", newTheme);
+      // console.log("newTheme", newTheme);
       setTheme(newTheme);
     } else {
-      console.log("did not updateTheme", timer, tickDelay);
+      // console.log("did not updateTheme", timer, tickDelay);
     }
   }, [timer, tickDelay, getRandomTheme, shouldResetStyle]);
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "~/lib/utils";
-import { usePreferences } from "./providers/Preferences-Provider";
+import { usePreferences } from "../providers/Preferences-Provider";
 
 export default function BackgroundNoiseEffect() {
   const { isDarkMode } = usePreferences();

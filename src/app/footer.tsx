@@ -4,9 +4,9 @@ import { HStack } from "~/components/HelperDivs";
 
 const Footer = () => {
   return (
-    <footer className="mt-5 flex w-[100vw] flex-col p-4 shadow-xl shadow-white">
+    <footer className="mt-5 flex w-[100vw] flex-col p-4 shadow-xl backdrop-blur-2xl">
       <HStack centered className="w-full">
-        <p className="text-sm text-gray-500">Miles Fritzmather</p>
+        <p className="text-sm font-bold text-gray-500">Miles Fritzmather</p>
         <HStack className="text-4xl text-primary/50">
           {Object.entries(socials).map(([key, info]) => (
             <Link

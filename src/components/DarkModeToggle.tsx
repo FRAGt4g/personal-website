@@ -2,8 +2,8 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Dice5Icon, Moon, Sun, XIcon } from "lucide-react";
 import { useRef, useState } from "react";
 import { THEME_OPTIONS, type Theme } from "~/styles/Themes";
+import { usePreferences } from "../providers/Preferences-Provider";
 import Container from "./Container";
-import { usePreferences } from "./providers/Preferences-Provider";
 import {
   Select,
   SelectContent,

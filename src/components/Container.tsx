@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { forwardRef } from "react";
 import { cn } from "~/lib/utils";
-import { usePreferences } from "./providers/Preferences-Provider";
+import { usePreferences } from "../providers/Preferences-Provider";
 
 type ContainerProps = {
   theme?: "dark" | "light";

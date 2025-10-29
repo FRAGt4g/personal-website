@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { VStack } from "~/components/HelperDivs";
-import { usePreferences } from "~/components/providers/Preferences-Provider";
+import { usePreferences } from "~/providers/Preferences-Provider";
 import { type Theme } from "~/styles/Themes";
 
 const StatisticalAnalysis = () => {

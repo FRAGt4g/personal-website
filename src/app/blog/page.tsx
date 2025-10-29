@@ -1,16 +1,47 @@
 "use client";
 
-import { useState } from "react";
 import { VStack } from "~/components/HelperDivs";
+import Popup from "~/components/Popup";
+import BouncingArrow from "../../components/bouncing-arrow";
+import { FadeIn } from "../../components/fade-in";
 
-export default function Home() {
-  const pseudoRandom = (i: number) => (Math.abs(Math.sin(i * 9999)) % 1) + 0.5; // value in [0.5,1.5)
-  const [trigger, setTrigger] = useState(false);
+const BlogPage = () => {
   return (
-    <div className="flex h-safe-area flex-col">
-      <VStack className="ml-10 mt-24" ySpacing="top" xSpacing="center">
-        here is where anything random stuff I wanna say will go
-      </VStack>
-    </div>
+    <VStack ySpacing="top" xSpacing="center" className="w-full">
+      <HeroBanner />
+    </VStack>
   );
-}
+};
+
+const HeroBanner = () => {
+  return (
+    <VStack centered gap={20} className="h-[100vh] w-full">
+      <VStack centered gap={5}>
+        <h1 className="whitespace-nowrap text-9xl font-black">
+          <Popup scaleIncrease={1.2} pullForce={1 / 10} shrinkOnClick>
+            <span className="inline-flex whitespace-nowrap">
+              {"My Writings".split("").map((char, index) => (
+                <FadeIn
+                  key={index}
+                  delayBetween={0.05}
+                  index={index}
+                  className="inline-block"
+                >
+                  {char === " " ? "\u00A0" : char}
+                </FadeIn>
+              ))}
+            </span>
+          </Popup>
+        </h1>
+        <FadeIn index={2}>
+          <h1 className="whitespace-nowrap text-6xl font-extrabold tracking-tight text-foreground/40">
+            {`Penny for my thoughts anyone?...`}
+          </h1>
+        </FadeIn>
+      </VStack>
+      <BouncingArrow />
+    </VStack>
+  );
+};
+
+export default BlogPage;

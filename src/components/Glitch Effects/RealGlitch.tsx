@@ -27,18 +27,18 @@ export function RemoteRealGlitch({
   const timerInterval = 100;
 
   useEffect(() => {
-    console.log("REAL GLITCH RENDER");
+    // console.log("REAL GLITCH RENDER");
   }, []);
 
   useEffect(() => {
     if (trigger) {
-      console.log("start");
+      // console.log("start");
       timerRef.current = 0;
       intervalId.current = setInterval(() => {
         timerRef.current = timerRef.current + timerInterval;
       }, timerInterval);
     } else {
-      console.log("stop");
+      // console.log("stop");
       clearInterval(intervalId.current);
       intervalId.current = undefined;
       timerRef.current = -1;

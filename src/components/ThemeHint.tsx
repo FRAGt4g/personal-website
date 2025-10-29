@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { XIcon } from "lucide-react";
 import { useState } from "react";
 import { capitalize, cn } from "~/lib/utils";
-import { usePreferences } from "./providers/Preferences-Provider";
+import { usePreferences } from "../providers/Preferences-Provider";
 
 const ThemeIndicator = ({
   corner,

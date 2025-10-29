@@ -2,7 +2,7 @@ import { motion, useInView } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { cn } from "~/lib/utils";
 import { type Theme } from "~/styles/Themes";
-import { usePreferences } from "../providers/Preferences-Provider";
+import { usePreferences } from "../../providers/Preferences-Provider";
 
 const GlitchReveal = ({
   children,
