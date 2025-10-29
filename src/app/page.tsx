@@ -1,11 +1,11 @@
+import { AllSocials } from "~/components/basics/socials";
+import BouncingArrow from "~/components/bouncing-arrow";
 import Container from "~/components/Container";
+import { FadeIn } from "~/components/fade-in";
 import GradientText from "~/components/GradientText";
 import { VStack } from "~/components/HelperDivs";
 import Popup from "~/components/Popup";
-import { AllSocials } from "~/components/basics/socials";
 import { cn } from "~/lib/utils";
-import BouncingArrow from "../../components/bouncing-arrow";
-import { FadeIn } from "../../components/fade-in";
 
 export default function Home() {
   return (
