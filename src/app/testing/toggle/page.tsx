@@ -8,8 +8,8 @@ export default function ToggleTestPage() {
   return (
     <VStack
       className="relative z-10 mx-auto mt-20 max-w-4xl"
-      ySpacing="top"
-      xSpacing="center"
+      y="top"
+      x="center"
       gap={8}
     >
       {/* Interactive Demo */}

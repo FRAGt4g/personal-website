@@ -1,26 +1,33 @@
 "use client";
 
-import { AllSocials } from "~/components/basics/socials";
+import BouncingArrow from "~/components/bouncing-arrow";
+import { FadeIn } from "~/components/fade-in";
 import { VStack } from "~/components/HelperDivs";
 import Popup from "~/components/Popup";
-import { FadeIn } from "../../components/fade-in";
+import useScrollValue from "~/hooks/useScrollValue";
 
-const ContactPage = () => {
-  return (
-    <VStack y="top" x="center" className="w-full">
-      <HeroBanner />
-    </VStack>
-  );
-};
+export default function HeroBanner() {
+  const scrollValue = useScrollValue({
+    start: 0,
+    end: 1000,
+    minValue: 0,
+    maxValue: 1,
+  });
 
-const HeroBanner = () => {
   return (
     <VStack centered gap={20} className="h-[100vh] w-full">
-      <VStack centered gap={5}>
+      <VStack
+        centered
+        gap={5}
+        style={{
+          filter: `blur(${scrollValue * 1000}px)`,
+          opacity: 1 - scrollValue,
+        }}
+      >
         <h1 className="whitespace-nowrap text-9xl font-black">
           <Popup scaleIncrease={1.2} pullForce={1 / 10} shrinkOnClick>
             <span className="inline-flex whitespace-nowrap">
-              {"Contact Me".split("").map((char, index) => (
+              {"My Writings".split("").map((char, index) => (
                 <FadeIn
                   key={index}
                   delayBetween={0.05}
@@ -35,13 +42,11 @@ const HeroBanner = () => {
         </h1>
         <FadeIn index={2}>
           <h1 className="whitespace-nowrap text-6xl font-extrabold tracking-tight text-foreground/40">
-            {`Like what you see? Shoot me a message!`}
+            {`Penny for my thoughts anyone?...`}
           </h1>
         </FadeIn>
       </VStack>
-      <AllSocials />
+      <BouncingArrow />
     </VStack>
   );
-};
-
-export default ContactPage;
+}

@@ -48,7 +48,7 @@ const HeroBanner = () => {
 
 export default function NotFound() {
   return (
-    <VStack ySpacing="top" xSpacing="center" className="w-full">
+    <VStack y="top" x="center" className="w-full">
       <HeroBanner />
     </VStack>
   );

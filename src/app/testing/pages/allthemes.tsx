@@ -69,7 +69,7 @@ const ThemeDisplay = ({ theme }: { theme: Theme }) => {
       <h1 className="mb-2 text-center text-2xl font-bold text-text">
         {capitalize(theme)}
       </h1>
-      <Grid maxCols={4} ySpacing="middle" xSpacing="center">
+      <Grid maxCols={4} y="middle" x="center">
         <ThemeCell bgColor="bg-primary" />
         <ThemeCell bgColor="bg-secondary" />
         <ThemeCell bgColor="bg-accent" />
@@ -289,7 +289,7 @@ function hexToHSL(hex: HexColor) {
 
 export default function AllThemes() {
   return (
-    <VStack xSpacing="center">
+    <VStack x="center">
       <CreateNewThemeDialog />
       <Separator orientation="horizontal" />
       <h1 className="w-full text-center text-2xl font-bold">Dark Themes</h1>

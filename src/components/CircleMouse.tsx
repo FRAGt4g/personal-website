@@ -4,20 +4,20 @@ import { motion } from "framer-motion";
 import { useEffect, useRef } from "react";
 
 const CircleMouse = () => {
-  const mouseDownRef = useRef<boolean>(false);
+  const size = 20;
+  const circleMouseRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const circleMouse = document.getElementById("circle-mouse");
+    if (!circleMouseRef.current) return;
+
     const target = { x: 0, y: 0 };
     const current = { x: 0, y: 0 };
     const lerpSpeed = 0.9;
 
-    if (!circleMouse) return;
-
     function moveCircleMouse() {
       current.x += (target.x - current.x) * lerpSpeed;
       current.y += (target.y - current.y) * lerpSpeed;
-      circleMouse!.style.transform = `translate3d(${current.x}px, ${current.y}px, 0) translate(-50%, -50%)`;
+      circleMouseRef.current!.style.transform = `translate(${current.x - size / 2}px, ${current.y - size / 2}px)`;
       requestAnimationFrame(moveCircleMouse);
     }
 
@@ -36,13 +36,12 @@ const CircleMouse = () => {
 
   return (
     <motion.div
-      id="circle-mouse"
+      ref={circleMouseRef}
       style={{
-        zIndex: 9999,
+        zIndex: 100,
         backdropFilter: "invert(0.8)",
-        height: "1rem",
-        width: "1rem",
-        scale: mouseDownRef.current ? 1.5 : 1,
+        height: size,
+        width: size,
       }}
       transition={{
         type: "spring",

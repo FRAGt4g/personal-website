@@ -5,9 +5,9 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useRef,
   useState,
 } from "react";
-import { playBlur } from "~/components/PageBlur";
 import { type Theme, THEME_OPTIONS } from "~/styles/Themes";
 
 type ExpandOut<T> = T extends infer R ? { [K in keyof R]: R[K] } : never;
@@ -60,6 +60,7 @@ export type StoredPreferences = {
   luminosity: StoredPrefernceValue<PREFERENCE_PreferredLuminosity> & {
     toggleDarkMode: () => void;
     isDarkMode: () => boolean;
+    toggleDarkModeNoAnimation: () => void;
   };
 };
 
@@ -68,6 +69,8 @@ export type EphemeralPreferences = {
     applyRandomTheme: (mustBeNew?: boolean) => void;
     getApplicableThemes: () => readonly Theme[];
     applyTheme: (theme: Theme) => void;
+    soonToBeTheme: Theme | null;
+    hardSetTheme: (theme: Theme) => void;
     getRandomTheme: (mustBeNew?: boolean) => Theme;
   };
 };
@@ -80,9 +83,12 @@ export const DEFAULT_PREFERENCES: ExpandOut<
     key: "ui-theme",
     isDarkMode: () => false,
     toggleDarkMode: () => null,
+    toggleDarkModeNoAnimation: () => null,
   },
   theme: {
     value: "dark",
+    soonToBeTheme: null,
+    hardSetTheme: () => null,
     applyRandomTheme: () => null,
     getApplicableThemes: () => THEME_OPTIONS.dark,
     applyTheme: () => null,
@@ -110,32 +116,33 @@ export function PreferencesProvider(props: { children: React.ReactNode }) {
     DEFAULT_PREFERENCES.luminosity.value,
   );
   const [theme, setTheme] = useState<Theme>(DEFAULT_PREFERENCES.theme.value);
+  const [soonToBeTheme, setSoonToBeTheme] = useState<Theme | null>(null);
+  const isInitialMountRef = useRef(true);
 
   function getPrefersDarkMode() {
     const a = window.matchMedia("(prefers-color-scheme: dark)").matches;
     return a;
   }
 
-  function darkOrLightLuminosity() {
+  const darkOrLightLuminosity = useCallback(() => {
     return luminosity === "system"
       ? getPrefersDarkMode()
         ? "dark"
         : "light"
       : luminosity;
-  }
+  }, [luminosity]);
 
-  useEffect(() => {
-    const storedTheme = localStorage?.getItem(
-      DEFAULT_PREFERENCES.luminosity.key,
-    ) as PREFERENCE_PreferredLuminosity | null;
-    if (storedTheme) {
-      setLuminosity(storedTheme);
-      applyRandomTheme(storedTheme);
-    } else {
-      applyRandomTheme("system");
+  const finalSetTheme = useCallback((theme: Theme) => {
+    for (const luminosity of Object.keys(THEME_OPTIONS)) {
+      for (const option of THEME_OPTIONS[
+        luminosity as keyof typeof THEME_OPTIONS
+      ]) {
+        document.body.classList.remove(option);
+      }
     }
+    document.body.classList.add(theme);
 
-    setIsMounted(true);
+    setTheme(theme);
   }, []);
 
   const applyRandomTheme = useCallback(
@@ -145,32 +152,43 @@ export function PreferencesProvider(props: { children: React.ReactNode }) {
         l === "system" ? darkOrLightLuminosity() : l
       ].filter((option) => (mustBeNew ? option !== theme : true));
       const randomTheme = options[Math.floor(Math.random() * options.length)]!;
-      console.log("options", options);
-      console.log("theme", randomTheme);
 
-      handleThemeChange(randomTheme);
+      // Only trigger animation if not initial mount
+      if (!isInitialMountRef.current) {
+        setSoonToBeTheme(randomTheme);
+      } else {
+        finalSetTheme(randomTheme);
+      }
     },
-    [luminosity],
+    [luminosity, theme, darkOrLightLuminosity, finalSetTheme],
   );
 
-  function handleThemeChange(theme: Theme) {
-    playBlur(
-      darkOrLightLuminosity() === "dark"
-        ? "rgba(0, 0, 0, 0.9)"
-        : "rgba(255, 255, 255, 0.9)",
-    );
-    for (const luminosity of Object.keys(THEME_OPTIONS)) {
-      for (const option of THEME_OPTIONS[
-        luminosity as keyof typeof THEME_OPTIONS
-      ]) {
-        document.body.classList.remove(option);
-      }
+  useEffect(() => {
+    const storedTheme = localStorage?.getItem(
+      DEFAULT_PREFERENCES.luminosity.key,
+    ) as PREFERENCE_PreferredLuminosity | null;
+    if (storedTheme) {
+      setLuminosity(storedTheme);
+      // On initial mount, set theme directly without animation
+      const l = storedTheme;
+      const options =
+        THEME_OPTIONS[l === "system" ? darkOrLightLuminosity() : l];
+      const randomTheme = options[Math.floor(Math.random() * options.length)]!;
+      finalSetTheme(randomTheme);
+      // Set soonToBeTheme to match theme to prevent animation trigger
+      setSoonToBeTheme(randomTheme);
+    } else {
+      // On initial mount, set theme directly without animation
+      const options = THEME_OPTIONS[darkOrLightLuminosity()];
+      const randomTheme = options[Math.floor(Math.random() * options.length)]!;
+      finalSetTheme(randomTheme);
+      // Set soonToBeTheme to match theme to prevent animation trigger
+      setSoonToBeTheme(randomTheme);
     }
-    document.body.classList.add(theme);
-    console.log("theme", theme);
 
-    setTheme(theme);
-  }
+    setIsMounted(true);
+    isInitialMountRef.current = false;
+  }, [darkOrLightLuminosity, finalSetTheme]);
 
   const value: PreferencesContext = {
     isMounted: isMounted,
@@ -186,14 +204,33 @@ export function PreferencesProvider(props: { children: React.ReactNode }) {
       setLuminosity(oppositeLuminosity);
       applyRandomTheme(oppositeLuminosity);
     },
+    toggleDarkModeNoAnimation: () => {
+      const oppositeLuminosity =
+        darkOrLightLuminosity() === "dark" ? "light" : "dark";
+      localStorage.setItem(
+        DEFAULT_PREFERENCES.luminosity.key,
+        oppositeLuminosity,
+      );
+      setLuminosity(oppositeLuminosity);
+      finalSetTheme(oppositeLuminosity === "dark" ? "dark" : "light");
+    },
     applyRandomTheme: (mustBeNew?: boolean) => {
       applyRandomTheme(undefined, mustBeNew);
     },
     isDarkMode: () => darkOrLightLuminosity() === "dark",
     theme,
+    soonToBeTheme,
     setTheme,
+    hardSetTheme: (theme: Theme) => {
+      finalSetTheme(theme);
+    },
     applyTheme: (theme: Theme) => {
-      handleThemeChange(theme);
+      // Only trigger animation if not initial mount
+      if (!isInitialMountRef.current) {
+        setSoonToBeTheme(theme);
+      } else {
+        finalSetTheme(theme);
+      }
     },
     getApplicableThemes: () => THEME_OPTIONS[darkOrLightLuminosity()],
     getRandomTheme: (mustBeNew?: boolean) => {

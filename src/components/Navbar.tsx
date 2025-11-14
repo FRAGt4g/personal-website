@@ -4,24 +4,24 @@ import { usePathname } from "next/navigation";
 import { memo, useMemo } from "react";
 import useTopOfScreen from "~/hooks/useTopOfScreen";
 import { cn } from "~/lib/utils";
+import { useMousePosition } from "../hooks/useMousePosition";
 import BetterLink from "./BetterLink";
 import Container from "./Container";
 import DarkModeToggle from "./DarkModeToggle";
-import GradientText from "./GradientText";
 import { HStack } from "./HelperDivs";
 import { FadeInText } from "./fade-in";
-import { useMousePosition } from "./useMousePosition";
-interface NavItem {
+
+type NavItem = {
   href: string;
   label: string;
-}
+};
 
 const navItems: NavItem[] = [
-  { label: "About Me", href: "/" },
+  { label: "About Me", href: "/about" },
   { label: "Projects", href: "/projects" },
   { label: "Writing", href: "/blog" },
   { label: "Contact", href: "/contact" },
-  { label: "Playground", href: "/playground" },
+  // { label: "Playground", href: "/playground" },
 ];
 
 // Memoize the Links component to prevent unnecessary rerenders
@@ -83,10 +83,8 @@ const Navbar = () => {
           <div className="flex items-center justify-between">
             <BetterLink href="/" className="p-0">
               <div className="flex flex-shrink-0 items-center">
-                <span className="text-xl tracking-tight">
-                  <GradientText className="font-black">
-                    Miles Fritzmather
-                  </GradientText>
+                <span className="text-xl font-black tracking-tight">
+                  Miles Fritzmather
                 </span>
               </div>
             </BetterLink>

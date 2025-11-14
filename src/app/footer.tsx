@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import socials from "~/components/basics/socials";
 import { HStack } from "~/components/HelperDivs";
@@ -14,6 +16,7 @@ const Footer = () => {
               href={info.link}
               target="_blank"
               rel="noopener noreferrer"
+              download={info.download}
             >
               <info.icon size={20} />
             </Link>

@@ -1,11 +1,11 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { memo, useMemo } from "react";
+import { memo, useEffect, useMemo } from "react";
 import useScrollValue from "~/hooks/useScrollValue";
 import { useBackground } from "~/providers/BackgroundProvider";
 
-const InteractiveSingleBubbleBackground = () => {
+const InteractiveSingleBlobBackground = () => {
   const { blobs, assignMouseBlob } = useBackground();
 
   // Memoize the blob elements to prevent unnecessary rerenders
@@ -57,6 +57,8 @@ const InteractiveSingleBubbleBackground = () => {
         }}
       >
         {blobElements}
+
+        {/* Mouse blob */}
         <div
           ref={(el) => {
             assignMouseBlob(el!);
@@ -160,18 +162,24 @@ const BlurOverlay = () => {
     start: 0,
     end: 500,
     minValue: 0,
-    maxValue: maxBlur,
+    maxValue: 1,
   });
+  const { setPaused } = useBackground();
+
+  useEffect(() => {
+    setPaused(scrollValue == 1);
+  }, [scrollValue, setPaused]);
+
   return (
     <motion.div
       className="absolute inset-0"
       animate={{
-        backdropFilter: `blur(${scrollValue}px)`,
-        backgroundColor: `hsl(var(--background) / ${(scrollValue / maxBlur) * maxOpacity})`,
+        backdropFilter: `blur(${scrollValue * maxBlur}px)`,
+        backgroundColor: `hsl(var(--background) / ${scrollValue * maxOpacity})`,
       }}
       transition={{ duration: 0.3 }}
     />
   );
 };
 
-export default InteractiveSingleBubbleBackground;
+export default InteractiveSingleBlobBackground;

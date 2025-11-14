@@ -1,11 +1,11 @@
 "use client";
 
-import { AllSocials } from "~/components/basics/socials";
+import BetterLink from "~/components/BetterLink";
 import { VStack } from "~/components/HelperDivs";
 import Popup from "~/components/Popup";
 import { FadeIn } from "../../components/fade-in";
 
-const ContactPage = () => {
+const ResumePage = () => {
   return (
     <VStack y="top" x="center" className="w-full">
       <HeroBanner />
@@ -20,7 +20,7 @@ const HeroBanner = () => {
         <h1 className="whitespace-nowrap text-9xl font-black">
           <Popup scaleIncrease={1.2} pullForce={1 / 10} shrinkOnClick>
             <span className="inline-flex whitespace-nowrap">
-              {"Contact Me".split("").map((char, index) => (
+              {"Resume".split("").map((char, index) => (
                 <FadeIn
                   key={index}
                   delayBetween={0.05}
@@ -35,13 +35,15 @@ const HeroBanner = () => {
         </h1>
         <FadeIn index={2}>
           <h1 className="whitespace-nowrap text-6xl font-extrabold tracking-tight text-foreground/40">
-            {`Like what you see? Shoot me a message!`}
+            {`Take a look!`}
           </h1>
+          <BetterLink href="/Miles Fritzmather Resume.pdf" download>
+            Download my résumé
+          </BetterLink>
         </FadeIn>
       </VStack>
-      <AllSocials />
     </VStack>
   );
 };
 
-export default ContactPage;
+export default ResumePage;

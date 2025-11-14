@@ -15,29 +15,37 @@ import {
 } from "./Shadcn/select";
 
 const DarkModeToggle = (props: React.ComponentProps<typeof motion.button>) => {
-  const { toggleDarkMode, isDarkMode } = usePreferences();
+  const { isDarkMode, toggleDarkMode } = usePreferences();
+  const buttonRef = useRef<HTMLButtonElement>(null);
+
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (buttonRef.current) {
+      toggleDarkMode();
+    }
+    props.onClick?.(e);
+  };
 
   return (
-    <motion.button
-      onClick={(e) => {
-        toggleDarkMode();
-        props.onClick?.(e);
-      }}
-      whileHover={{ scale: 1.1 }}
-      whileTap={{ scale: 0.9 }}
-      initial={{ rotate: isDarkMode() ? 180 : 0 }}
-      animate={{
-        rotate: isDarkMode() ? 180 : 0,
-      }}
-      transition={{
-        type: "spring",
-        stiffness: 200,
-        damping: 17,
-      }}
-      {...props}
-    >
-      {isDarkMode() ? <Sun /> : <Moon />}
-    </motion.button>
+    <>
+      <motion.button
+        ref={buttonRef}
+        onClick={handleClick}
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
+        initial={{ rotate: isDarkMode() ? 180 : 0 }}
+        animate={{
+          rotate: isDarkMode() ? 180 : 0,
+        }}
+        transition={{
+          type: "spring",
+          stiffness: 200,
+          damping: 17,
+        }}
+        {...props}
+      >
+        {isDarkMode() ? <Sun /> : <Moon />}
+      </motion.button>
+    </>
   );
 };
 
