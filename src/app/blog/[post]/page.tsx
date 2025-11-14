@@ -8,31 +8,12 @@ import { getPost } from "~/lib/posts";
 
 export const dynamicParams = false;
 
-// export const generateStaticParams = async () => {
-//   const slugs = await getAllPosts();
-//   return slugs.map((slug) => ({ post: slug }));
-// };
+type PostPageProps = Promise<{
+  post: string;
+}>;
 
-// export const generateMetadata = async ({
-//   params,
-// }: {
-//   params: { post: string };
-// }): Promise<Metadata> => {
-//   const summary = await getPostSummary(params.post);
-//   if (!summary) {
-//     return {
-//       title: "Post not found",
-//     };
-//   }
-
-//   return {
-//     title: summary.title,
-//     description: summary.description || undefined,
-//   };
-// };
-
-const PostPage = async ({ params }: { params: { post: string } }) => {
-  const post = await getPost(params.post);
+const PostPage = async ({ params }: { params: PostPageProps }) => {
+  const post = await getPost((await params).post);
 
   if (!post) {
     notFound();
