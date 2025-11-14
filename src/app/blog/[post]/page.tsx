@@ -4,13 +4,18 @@ import { notFound } from "next/navigation";
 import Container from "~/components/Container";
 import { HStack, VStack } from "~/components/HelperDivs";
 import Popup from "~/components/Popup";
-import { getPost } from "~/lib/posts";
+import { getAllPostsMetadata, getPost } from "~/lib/posts";
 
 export const dynamicParams = false;
 
 type PostPageProps = Promise<{
   post: string;
 }>;
+
+export const generateStaticParams = async () => {
+  const posts = await getAllPostsMetadata();
+  return posts.map((post) => ({ post: post.filename }));
+};
 
 const PostPage = async ({ params }: { params: PostPageProps }) => {
   const post = await getPost((await params).post);
