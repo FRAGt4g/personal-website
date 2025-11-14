@@ -2,13 +2,6 @@ import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
 export function middleware(request: NextRequest) {
-  // Return the response unmodified
-  const { pathname } = request.nextUrl;
-
-  if (pathname === "/") {
-    return NextResponse.redirect(new URL("/about", request.url));
-  }
-
   return NextResponse.next();
 }
 
